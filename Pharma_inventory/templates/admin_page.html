@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription Driven Pharma Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
+    <script src="{{ url_for('static', filename='script/admin_script.js') }}"></script>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="{{ url_for('static', filename='images/logo.webp') }}" alt="Logo" class="logo">
+            <h1>Prescription Driven Pharma Management System</h1>
+        </div>
+    </header>
+
+    <nav class="navbar">
+        <ul>
+            <li><a href="#home" class="active" onclick="showSection('home')">Home</a></li>
+            <li><a href="#about" onclick="showSection('about')">About</a></li>
+            <li><a href="#inventory" onclick="showSection('inventory')">Inventory</a></li>
+            <li><a href="#add-entity" onclick="showSection('add-entity')">Add Entity</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div id="home" class="section">
+            <h2>Our Vision and Mission</h2>
+            <p>Our vision is to provide accessible healthcare solutions through advanced pharmaceutical management. Our mission is to enhance patient care by ensuring the right medications are available at the right time.</p>
+
+            <label for="pharmacySelect">Choose the Pharmacy:</label>
+            <select id="pharmacySelect" onchange="fetchSalesData(this.value)">
+                <option value="">Select Pharmacy</option>
+                <option value="HealthPlus Pharmacy">HealthPlus Pharmacy</option>
+                <option value="CityCare Pharmacy">CityCare Pharmacy</option>
+                <option value="MedZone Pharmacy">MedZone Pharmacy</option>
+                <option value="Wellness Pharmacy">Wellness Pharmacy</option>
+                <option value="CureAll Pharmacy">CureAll Pharmacy</option>
+            </select>
+
+            <table id="salesTable" style="display:none;">
+                <thead>
+                    <tr>
+                        <th>Pharmacy Name</th>
+                        <th>Medicine Sold</th>
+                        <th>Quantity</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="about" class="section" style="display:none;">
+            <h2>About Us</h2>
+            <p>We are committed to excellence in pharmaceutical management. Our mission is to promote health and well-being through innovative solutions. Our vision is to be a leader in the pharmaceutical industry by prioritizing patient needs and fostering partnerships with healthcare providers.</p>
+        </div>
+
+        <div id="inventory" class="section" style="display:none;">
+            <h2>Inventory</h2>
+            <!-- Updated Inventory Dropdown -->
+            <label for="inventoryPharmacySelect">Choose the Pharmacy:</label>
+            <select id="inventoryPharmacySelect" onchange="fetchInventoryData(this.value)">
+                <option value="">Select Pharmacy</option>
+                <option value="HealthPlus Pharmacy">HealthPlus Pharmacy</option>
+                <option value="CityCare Pharmacy">CityCare Pharmacy</option>
+                <option value="MedZone Pharmacy">MedZone Pharmacy</option>
+                <option value="Wellness Pharmacy">Wellness Pharmacy</option>
+                <option value="CureAll Pharmacy">CureAll Pharmacy</option>
+            </select>
+            
+            <table id="inventoryTable" style="display:none;">
+                <thead>
+                    <tr>
+                        <th>Medicine Name</th>
+                        <th>Quantity</th>
+                        <th>Price Per Unit</th>
+                        <th>Total Price</th>
+                        <th>Purchase Date</th>
+                        <th>Prescription Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="add-entity" class="section" style="display:none;">
+            <h2>Add Entity</h2>
+            <label for="entityType">Which type of entity:</label>
+            <select id="entityType" onchange="showEntityForm()">
+                <option value="">Select Entity Type</option>
+                <option value="Admin">Admin</option>
+                <option value="Manager">Manager</option>
+            </select>
+            <br><br><br>
+            <div id="entityFormContainer"></div>
+            <br><br><br>
+            Some content will be displayed here
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Prescription Driven Pharma Management System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        function fetchSalesData(pharmacyName) {
+    if (!pharmacyName) {
+        alert("Please select a pharmacy.");
+        return;
+    }
+
+    // Send a request to the backend to fetch sales data
+    fetch('/fetch_sales_data', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ pharmacy_name: pharmacyName })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+            document.getElementById('salesTable').style.display = 'none';
+        } else {
+            updateSalesTable(data.sales);
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching sales data:', error);
+    });
+}
+
+function updateSalesTable(salesData) {
+    const salesTable = document.getElementById('salesTable');
+    const tbody = salesTable.querySelector('tbody');
+
+    // Clear existing rows
+    tbody.innerHTML = '';
+
+    // Populate table with new data
+    salesData.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${item.pharmacy_name}</td>
+            <td>${item.medicine_name}</td>
+            <td>${item.quantity}</td>
+            <td>${item.total_amount}</td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    // Show the table
+    salesTable.style.display = 'table';
+}
+
+        // Function to fetch inventory data for the selected pharmacy
+        function fetchInventoryData(pharmacyName) {
+            if (!pharmacyName) {
+                alert("Please select a pharmacy.");
+                return;
+            }
+
+            // Send a request to the backend to fetch inventory data
+            fetch('/fetch_inventory_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ pharmacy_name: pharmacyName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    document.getElementById('inventoryTable').style.display = 'none';
+                } else {
+                    updateInventoryTable(data.inventory);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching inventory data:', error);
+            });
+        }
+
+        // Function to update the inventory table with data
+        function updateInventoryTable(inventoryData) {
+            const inventoryTable = document.getElementById('inventoryTable');
+            const tbody = inventoryTable.querySelector('tbody');
+
+            // Clear existing rows
+            tbody.innerHTML = '';
+
+            // Populate table with new data
+            inventoryData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.medicine_name}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.price_per_unit}</td>
+                    <td>${item.total_price}</td>
+                    <td>${item.purchase_date}</td>
+                    <td>${item.prescription_date}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Show the table
+            inventoryTable.style.display = 'table';
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription Driven Pharma Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="logo.webp" alt="Logo" class="logo">
+            <h1>Prescription Driven Pharma Management System</h1>
+        </div>
+    </header>
+
+    <nav class="navbar">
+        <ul>
+            <li><a href="#home" class="active" onclick="showSection('home')">Home</a></li>
+            <li><a href="#about" onclick="showSection('about')">About</a></li>
+            <li><a href="#inventory" onclick="showSection('inventory')">Inventory</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div id="home" class="section">
+            <h2>Our Vision and Mission</h2>
+            <p>Our vision is to provide accessible healthcare solutions through advanced pharmaceutical management. Our mission is to enhance patient care by ensuring the right medications are available at the right time.</p>
+
+            <label for="prescriptionId">Enter Prescription ID:</label>
+            <input type="text" id="prescriptionId" placeholder="Prescription ID">
+            <button id="fetchButton">Fetch</button>
+
+            <table id="medicinesTable" style="display:none;">
+                <thead>
+                    <tr>
+                        <th>Sno</th>
+                        <th>Medicine Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Paracetamol</td>
+                        <td>2</td>
+                        <td>380</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Azithromycine</td>
+                        <td>1</td>
+                        <td>110</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button id="generateButton" style="display:none;">Generate</button>
+            <div id="result"></div>
+        </div>
+
+        <div id="about" class="section" style="display:none;">
+            <h2>About Us</h2>
+            <p>We are committed to excellence in pharmaceutical management. Our mission is to promote health and well-being through innovative solutions. Our vision is to be a leader in the pharmaceutical industry by prioritizing patient needs and fostering partnerships with healthcare providers.</p>
+        </div>
+
+        <div id="inventory" class="section" style="display:none;">
+            <h2>Inventory</h2>
+            <p>Data from the database will be fetched here and displayed in an attractive manner.</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Prescription Driven Pharma Management System. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
